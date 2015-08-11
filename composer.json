@@ -1,0 +1,26 @@
+{
+  "name": "monii/reflection-properties-serializer ",
+  "description": "Reflection Properties Serializer",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Beau Simensen",
+      "email": "beau@dflydev.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Monii\\ReflectionPropertiesSerializer\\": "src/Monii/ReflectionPropertiesSerializer"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.7",
+    "squizlabs/php_codesniffer": "^2.3"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.0.x-dev"
+    }
+  }
+}
