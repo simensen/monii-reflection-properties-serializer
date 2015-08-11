@@ -69,7 +69,7 @@ class ReflectionPropertiesSerializer
     /**
      * (@inheritdoc)
      */
-    public function canDeserialize(array $data)
+    public function canDeserialize($type, array $data)
     {
         return true;
     }

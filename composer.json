@@ -11,7 +11,7 @@
   "require": {},
   "autoload": {
     "psr-4": {
-      "Monii\\Serialization\\ReflectionPropertiesSerializer\\": "src"
+      "Monii\\Serialization\\ReflectionPropertiesSerializer\\": "src/Serialization/ReflectionPropertiesSerializer"
     }
   },
   "require-dev": {
@@ -20,7 +20,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Monii\\Serialization\\ReflectionPropertiesSerializer\\": "tests/unit"
+      "Monii\\Serialization\\ReflectionPropertiesSerializer\\": "tests/unit/Serialization/ReflectionPropertiesSerializer"
     }
   },
   "extra": {
