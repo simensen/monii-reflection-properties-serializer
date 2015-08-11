@@ -8,6 +8,11 @@ use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Depth\Reflection
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\Post;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\PostId;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Banking\Account\AccountWasOpened;
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Task\Task;
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Task\TaskId;
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Worker\WorkerId;
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Common\Identity;
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Common\SimpleIdentity;
 use PHPUnit_Framework_TestCase as TestCase;
 
 class ReflectionPropertiesSerializerTest extends TestCase
@@ -38,6 +43,7 @@ class ReflectionPropertiesSerializerTest extends TestCase
         $complicated->setPrivateTraitValue('c');
 
         return [
+            [new Task(TaskId::fromString('first-post'), WorkerId::fromString('first-post'), 'My First Task')],
             [new AccountWasOpened('fixture-account-000', 25)],
             [new Post(PostId::fromString('first-post'))],
             [$complicated],
