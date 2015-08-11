@@ -4,6 +4,7 @@ namespace Monii\Serialization\ReflectionPropertiesSerializer;
 
 //use Monii\AggregateEventStorage\Contract\SimplePhpFqcnContractResolver;
 
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Depth\ReflectionPropertiesSerializerFixture;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\Post;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\PostId;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Banking\Account\AccountWasOpened;
@@ -43,7 +44,7 @@ class ReflectionPropertiesSerializerTest extends TestCase
 
     public function provideRoundTripData()
     {
-        $complicated = new PropertiesReflectionSerializerFixture();
+        $complicated = new ReflectionPropertiesSerializerFixture();
         $complicated->setPrivateOuterValue('a');
         $complicated->setPrivateExtendedValue('b');
         $complicated->setPrivateTraitValue('c');
@@ -53,36 +54,5 @@ class ReflectionPropertiesSerializerTest extends TestCase
             [new Post(PostId::fromString('first-post'))],
             [$complicated],
         ];
-    }
-}
-
-trait PropertiesReflectionSerializerTrait
-{
-    private $privateTraitValue;
-    public function setPrivateTraitValue($privateTraitValue)
-    {
-        $this->privateTraitValue = $privateTraitValue;
-    }
-}
-
-class PropertiesReflectionSerializerExtended
-{
-    use PropertiesReflectionSerializerTrait;
-
-    private $privateExtendedValue;
-
-    public function setPrivateExtendedValue($privateExtendedValue)
-    {
-        $this->privateExtendedValue = $privateExtendedValue;
-    }
-}
-
-class PropertiesReflectionSerializerFixture extends PropertiesReflectionSerializerExtended
-{
-    private $privateOuterValue;
-
-    public function setPrivateOuterValue($privateOuterValue)
-    {
-        $this->privateOuterValue = $privateOuterValue;
     }
 }
