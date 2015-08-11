@@ -19,23 +19,11 @@ class ReflectionPropertiesSerializerTest extends TestCase
     {
         $reflectionSerializer = new ReflectionPropertiesSerializer();
 
-        if (!$reflectionSerializer->canSerialize($input))
-        {
-            // Stop here and mark this test as failed.
-            $this->fail('Unable to serialize');
-        }
-
         $data = $reflectionSerializer->serialize($input);
 
         // Let's simulate converting this to a JSON string and
         // back again.
         $data = json_decode(json_encode($data), true);
-
-        if (!$reflectionSerializer->canDeserialize($input, $data))
-        {
-            // Stop here and mark this test as failed.
-            $this->fail('Unable to deserialize array ' . print_r($data, true));
-        }
 
         $object = $reflectionSerializer->deserialize($input, $data);
 
