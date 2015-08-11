@@ -17,14 +17,6 @@ class ReflectionPropertiesSerializer
     /**
      * (@inheritdoc)
      */
-    public function canSerialize($object)
-    {
-        return true;
-    }
-
-    /**
-     * (@inheritdoc)
-     */
     public function serialize($object)
     {
         $data = [];
@@ -64,14 +56,6 @@ class ReflectionPropertiesSerializer
         }
 
         return $data;
-    }
-
-    /**
-     * (@inheritdoc)
-     */
-    public function canDeserialize($type, array $data)
-    {
-        return true;
     }
 
     /**
