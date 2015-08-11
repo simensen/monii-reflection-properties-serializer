@@ -59,7 +59,21 @@ class ReflectionPropertyHelper
                             }
 
                         } else {
-                            $this->types[] = $type = null;
+
+                            $aliases = $this->getAliases($reflectionClass->getFileName());
+                            if (array_key_exists($type, $aliases) && class_exists($aliases[$type])) {
+
+                                // Object
+                                $this->types[] = $type;
+
+                                $typeReflectionClass = new \ReflectionClass($type);
+                                if (!$typeReflectionClass->isInterface() && !$typeReflectionClass->isAbstract()) {
+                                    $this->isObject = $type;
+                                }
+
+                            } else {
+                                $this->types[] = $type = null;
+                            }
                         }
                     }
                 }
@@ -94,5 +108,50 @@ class ReflectionPropertyHelper
     public function setValue($object, $value = null)
     {
         $this->reflectionProperty->setValue($object, $value);
+    }
+
+    public function getAliases($filename)
+    {
+        $source = file_get_contents($filename);
+        $tokens = token_get_all($source);
+
+        $uses = [];
+
+        while (count($tokens)) {
+            $token = array_shift($tokens);
+            if (is_string($token)) {
+                continue;
+            }
+
+            list($code, $value, $line) = $token;
+            if ($code === T_USE) {
+                $use = '';
+                $alias = '';
+                $as = false;
+                while (count($tokens)) {
+                    $next = array_shift($tokens);
+                    if (is_string($next) && $next === ';') {
+                        $uses[$alias ?: $use] = $use;
+
+                        continue 2;
+                    }
+                    list($code, $value, $line) = $next;
+                    if ($code === T_WHITESPACE) {
+                        continue;
+                    }
+                    if ($code === T_AS) {
+                        $as = true;
+                        continue;
+                    }
+                    if ($as) {
+                        $alias .= $value;
+                    } else {
+                        $use .= $value;
+                    }
+                }
+            }
+        }
+
+        return $uses;
     }
 }
