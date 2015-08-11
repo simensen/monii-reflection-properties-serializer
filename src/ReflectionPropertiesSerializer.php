@@ -33,14 +33,16 @@ class ReflectionPropertiesSerializer
         \ReflectionClass $reflectionClass,
         $object
     ) {
+
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+
             if (array_key_exists($reflectionProperty->getName(), $data)) {
                 continue;
             }
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
 
-            if ($property->isObject()) {
+            if ($property->getType()) {
                 $data[$reflectionProperty->getName()] = $this->subSerialize($property->getValue($object));
             } else {
                 $data[$reflectionProperty->getName()] = $property->getValue($object);

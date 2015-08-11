@@ -36,6 +36,7 @@ class ReflectionPropertyHelper
         if (preg_match('/@var\s+([^\s]+)/', $reflectionProperty->getDocComment(), $matches)) {
             list(, $type) = $matches;
             $types = explode("|", $type);
+
             if (!empty($types)) {
                 foreach ($types as $type) {
                     if (class_exists($type)) {
@@ -48,20 +49,23 @@ class ReflectionPropertyHelper
                         }
 
                     } else {
-                        $type = $reflectionClass->getNamespaceName() . '\\' . $type;
-                        if (class_exists($type)) {
+                        $typeCheck = $reflectionClass->getNamespaceName() . '\\' . $type;
+                        if (class_exists($typeCheck)) {
                             // Object
-                            $this->types[] = $type;
+                            $this->types[] = $typeCheck;
 
-                            $typeReflectionClass = new \ReflectionClass($type);
+                            $typeReflectionClass = new \ReflectionClass($typeCheck);
+
                             if (!$typeReflectionClass->isInterface() && !$typeReflectionClass->isAbstract()) {
-                                $this->isObject = $type;
+                                $this->isObject = $typeCheck;
                             }
 
                         } else {
-
                             $aliases = $this->getAliases($reflectionClass->getFileName());
+
                             if (array_key_exists($type, $aliases) && class_exists($aliases[$type])) {
+
+                                $type = $aliases[$type];
 
                                 // Object
                                 $this->types[] = $type;
@@ -131,7 +135,14 @@ class ReflectionPropertyHelper
                 while (count($tokens)) {
                     $next = array_shift($tokens);
                     if (is_string($next) && $next === ';') {
-                        $uses[$alias ?: $use] = $use;
+                        if ($alias != '') {
+                            $key = $alias;
+                        } else {
+                            $key = explode("\\", $use);
+                            $key = $key[count($key) - 1];
+                        }
+                        $uses[$key] = $use;
+                        //$uses[$alias ?: $use] = $use;
 
                         continue 2;
                     }
