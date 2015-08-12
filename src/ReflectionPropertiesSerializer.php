@@ -2,16 +2,18 @@
 
 namespace Monii\Serialization\ReflectionPropertiesSerializer;
 
+use Monii\Serialization\ReflectionPropertiesSerializer\PhpBuiltInType\PhpBuiltInTypeHandler;
+
 class ReflectionPropertiesSerializer
 {
     /**
      * @var ReflectionPropertiesSerializer
      */
-    private $subSerializer;
+    private $handler;
 
-    public function __construct(ReflectionPropertiesSerializer $subSerializer = null)
+    public function __construct(Handler $handler = null)
     {
-        $this->subSerializer = $subSerializer;
+        $this->handler = $handler ?: new PhpBuiltInTypeHandler();
     }
 
     /**
@@ -42,10 +44,17 @@ class ReflectionPropertiesSerializer
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
 
+            $value = $property->getValue($object);
+
+            if (is_null($value))
+            {
+                continue;
+            }
+
             if ($property->getType()) {
-                $data[$reflectionProperty->getName()] = $this->subSerialize($property->getValue($object));
+                $data[$reflectionProperty->getName()] = $this->subSerialize($value);
             } else {
-                $data[$reflectionProperty->getName()] = $property->getValue($object);
+                $data[$reflectionProperty->getName()] = $value;
             }
         }
 
@@ -86,10 +95,16 @@ class ReflectionPropertiesSerializer
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
             if ($property->isObject()) {
-                $property->setValue($object, $this->subDeserialize(
-                    $property->getType(),
-                    $data[$reflectionProperty->getName()]
-                ));
+
+                $value = !is_null($data[$reflectionProperty->getName()])
+                    ? $this->subDeserialize($property->getType(), $data[$reflectionProperty->getName()])
+                    : null;
+
+                $property->setValue(
+                    $object,
+                    $value
+                );
+
             } else {
                 $property->setValue($object, $data[$reflectionProperty->getName()]);
             }
@@ -110,29 +125,25 @@ class ReflectionPropertiesSerializer
 
     private function subSerialize($object)
     {
-        $this->ensureSubSerializerExists();
+        if ($this->handler->canSerialize($object)) {
 
-        return $this->subSerializer->serialize(
+            return $this->handler->serialize($object);
+        }
+
+        return $this->serialize(
             $object
         );
     }
 
     private function subDeserialize($type, $data)
     {
-        $this->ensureSubSerializerExists();
+        if ($this->handler->canDeserialize($type, $data)) {
+            return $this->handler->deserialize($type, $data);
+        }
 
-        return $this->subSerializer->deserialize(
+        return $this->deserialize(
             $type,
             $data
         );
-    }
-
-    private function ensureSubSerializerExists()
-    {
-        if (! is_null($this->subSerializer)) {
-            return;
-        }
-
-        $this->subSerializer = new self();
     }
 }

@@ -43,7 +43,7 @@ class ReflectionPropertiesSerializerTest extends TestCase
         $complicated->setPrivateTraitValue('c');
 
         return [
-            [new Task(TaskId::fromString('first-post'), WorkerId::fromString('first-post'), 'My First Task')],
+            [new Task(TaskId::fromString('first-post'), WorkerId::fromString('first-post'), 'My First Task', new \DateTime('now'))],
             [new AccountWasOpened('fixture-account-000', 25)],
             [new Post(PostId::fromString('first-post'))],
             [$complicated],
