@@ -2,16 +2,18 @@
 
 namespace Monii\Serialization\ReflectionPropertiesSerializer;
 
+use Monii\Serialization\ReflectionPropertiesSerializer\PhpBuiltInType\PhpBuiltInTypeHandler;
+
 class ReflectionPropertiesSerializer
 {
     /**
      * @var ReflectionPropertiesSerializer
      */
-    private $subSerializer;
+    private $handler;
 
-    public function __construct(ReflectionPropertiesSerializer $subSerializer = null)
+    public function __construct(Handler $handler = null)
     {
-        $this->subSerializer = $subSerializer;
+        $this->handler = $handler ?: new PhpBuiltInTypeHandler();
     }
 
     /**
@@ -110,29 +112,25 @@ class ReflectionPropertiesSerializer
 
     private function subSerialize($object)
     {
-        $this->ensureSubSerializerExists();
+        if ($this->handler->canSerialize($object)) {
 
-        return $this->subSerializer->serialize(
+            return $this->handler->serialize($object);
+        }
+
+        return $this->serialize(
             $object
         );
     }
 
     private function subDeserialize($type, $data)
     {
-        $this->ensureSubSerializerExists();
+        if ($this->handler->canDeserialize($type, $data)) {
+            return $this->handler->deserialize($type, $data);
+        }
 
-        return $this->subSerializer->deserialize(
+        return $this->deserialize(
             $type,
             $data
         );
-    }
-
-    private function ensureSubSerializerExists()
-    {
-        if (! is_null($this->subSerializer)) {
-            return;
-        }
-
-        $this->subSerializer = new self();
     }
 }
