@@ -44,10 +44,17 @@ class ReflectionPropertiesSerializer
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
 
+            $value = $property->getValue($object);
+
+            if (is_null($value))
+            {
+                continue;
+            }
+
             if ($property->getType()) {
-                $data[$reflectionProperty->getName()] = $this->subSerialize($property->getValue($object));
+                $data[$reflectionProperty->getName()] = $this->subSerialize($value);
             } else {
-                $data[$reflectionProperty->getName()] = $property->getValue($object);
+                $data[$reflectionProperty->getName()] = $value;
             }
         }
 
@@ -88,10 +95,16 @@ class ReflectionPropertiesSerializer
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
             if ($property->isObject()) {
-                $property->setValue($object, $this->subDeserialize(
-                    $property->getType(),
-                    $data[$reflectionProperty->getName()]
-                ));
+
+                $value = !is_null($data[$reflectionProperty->getName()])
+                    ? $this->subDeserialize($property->getType(), $data[$reflectionProperty->getName()])
+                    : null;
+
+                $property->setValue(
+                    $object,
+                    $value
+                );
+
             } else {
                 $property->setValue($object, $data[$reflectionProperty->getName()]);
             }
