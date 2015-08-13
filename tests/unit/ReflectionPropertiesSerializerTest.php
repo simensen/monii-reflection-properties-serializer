@@ -47,14 +47,11 @@ class ReflectionPropertiesSerializerTest extends TestCase
         ];
     }
 
-    /** @expectedException PropertyTypeWasNotDefined */
+    /** @expectedException Monii\Serialization\ReflectionPropertiesSerializer\PropertyTypeWasNotDefined */
     public function testPropertyWasNotDefinedException()
     {
-        $this->setExpectedException('Monii\Serialization\ReflectionPropertiesSerializer\PropertyTypeWasNotDefined');
         $input = new NoTypehint();
         $reflectionSerializer = new ReflectionPropertiesSerializer();
-        $data = $reflectionSerializer->serialize($input);
-        $data = json_decode(json_encode($data), true);
-        $reflectionSerializer->deserialize($input, $data);
+        $reflectionSerializer->serialize($input);
     }
 }
