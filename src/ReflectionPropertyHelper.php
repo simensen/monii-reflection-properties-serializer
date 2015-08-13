@@ -33,6 +33,12 @@ class ReflectionPropertyHelper
     {
         $reflectionProperty->setAccessible(true);
 
+
+        if (strpos($reflectionProperty->getDocComment(), "@var") === false)
+        {
+            throw new PropertyTypeWasNotDefined($reflectionClass->getName(), $reflectionProperty->getName());
+        }
+
         if (preg_match('/@var\s+([^\s]+)/', $reflectionProperty->getDocComment(), $matches)) {
             list(, $type) = $matches;
             $types = explode("|", $type);

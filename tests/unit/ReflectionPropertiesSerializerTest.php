@@ -2,8 +2,6 @@
 
 namespace Monii\Serialization\ReflectionPropertiesSerializer;
 
-//use Monii\AggregateEventStorage\Contract\SimplePhpFqcnContractResolver;
-
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Depth\ReflectionPropertiesSerializerFixture;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\Post;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\PostId;
@@ -11,8 +9,7 @@ use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Banking\Account\
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Task\Task;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Task\TaskId;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Worker\WorkerId;
-use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Common\Identity;
-use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\TaskList\Common\SimpleIdentity;
+use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Failing\NoTypehint;
 use PHPUnit_Framework_TestCase as TestCase;
 
 class ReflectionPropertiesSerializerTest extends TestCase
@@ -48,5 +45,13 @@ class ReflectionPropertiesSerializerTest extends TestCase
             [new Post(PostId::fromString('first-post'))],
             [$complicated],
         ];
+    }
+
+    /** @expectedException Monii\Serialization\ReflectionPropertiesSerializer\PropertyTypeWasNotDefined */
+    public function testPropertyWasNotDefinedException()
+    {
+        $input = new NoTypehint();
+        $reflectionSerializer = new ReflectionPropertiesSerializer();
+        $reflectionSerializer->serialize($input);
     }
 }

@@ -4,7 +4,14 @@ namespace Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Banking\Ac
 
 class AccountWasOpened
 {
+    /**
+     * @var string
+     */
     public $accountId;
+
+    /**
+     * @var string
+     */
     public $startingBalance;
 
     public function __construct($accountId, $startingBalance)
