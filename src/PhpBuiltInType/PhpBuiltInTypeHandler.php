@@ -53,5 +53,4 @@ class PhpBuiltInTypeHandler implements Handler
     {
         return $this->handler->deserialize($type, $data);
     }
-
 }

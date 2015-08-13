@@ -37,7 +37,6 @@ class ReflectionPropertiesSerializer
     ) {
 
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-
             if (array_key_exists($reflectionProperty->getName(), $data)) {
                 continue;
             }
@@ -46,8 +45,7 @@ class ReflectionPropertiesSerializer
 
             $value = $property->getValue($object);
 
-            if (is_null($value))
-            {
+            if (is_null($value)) {
                 continue;
             }
 
@@ -95,7 +93,6 @@ class ReflectionPropertiesSerializer
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
             if ($property->isObject()) {
-
                 $value = !is_null($data[$reflectionProperty->getName()])
                     ? $this->subDeserialize($property->getType(), $data[$reflectionProperty->getName()])
                     : null;
@@ -126,7 +123,6 @@ class ReflectionPropertiesSerializer
     private function subSerialize($object)
     {
         if ($this->handler->canSerialize($object)) {
-
             return $this->handler->serialize($object);
         }
 

@@ -34,8 +34,7 @@ class ReflectionPropertyHelper
         $reflectionProperty->setAccessible(true);
 
 
-        if (strpos($reflectionProperty->getDocComment(), "@var") === false)
-        {
+        if (strpos($reflectionProperty->getDocComment(), "@var") === false) {
             throw new PropertyTypeWasNotDefined($reflectionClass->getName(), $reflectionProperty->getName());
         }
 
@@ -70,7 +69,6 @@ class ReflectionPropertyHelper
                             $aliases = $this->getAliases($reflectionClass->getFileName());
 
                             if (array_key_exists($type, $aliases) && class_exists($aliases[$type])) {
-
                                 $type = $aliases[$type];
 
                                 // Object
