@@ -21,6 +21,9 @@
       "email": "alec.charlton@monii.com"
     }
   ],
+  "require": {
+    "php": ">=5.4"
+  },
   "autoload": {
     "psr-4": {
       "Monii\\Serialization\\ReflectionPropertiesSerializer\\": "src"
