@@ -2,13 +2,25 @@
   "name": "monii/reflection-properties-serializer",
   "description": "Reflection Properties Serializer",
   "license": "MIT",
+  "keywords": ["reflection", "properties", "serializer"],
   "authors": [
+    {
+      "name": "monii.io",
+      "email": "team@monii.com"
+    },
     {
       "name": "Beau Simensen",
       "email": "beau@dflydev.com"
+    },
+    {
+      "name": "Steve Marks",
+      "email": "steve.marks@monii.com"
+    },
+    {
+      "name": "Alec Charlton",
+      "email": "alec.charlton@monii.com"
     }
   ],
-  "require": {},
   "autoload": {
     "psr-4": {
       "Monii\\Serialization\\ReflectionPropertiesSerializer\\": "src"
