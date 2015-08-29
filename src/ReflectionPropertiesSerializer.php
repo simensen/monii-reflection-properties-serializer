@@ -43,13 +43,21 @@ class ReflectionPropertiesSerializer
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
 
+            if ($property->isSkipped()) {
+                continue;
+            }
+
             $value = $property->getValue($object);
 
             if (is_null($value)) {
                 continue;
             }
 
-            if ($property->getType()) {
+            if ($property->isArray() && $property->isObject()) {
+                $data[$reflectionProperty->getName()] = array_map(function ($value) {
+                    return $this->serialize($value);
+                }, $value);
+            } elseif ($property->getType()) {
                 $data[$reflectionProperty->getName()] = $this->subSerialize($value);
             } else {
                 $data[$reflectionProperty->getName()] = $value;
@@ -92,7 +100,20 @@ class ReflectionPropertiesSerializer
             }
 
             $property = new ReflectionPropertyHelper($reflectionClass, $reflectionProperty);
-            if ($property->isObject()) {
+
+            if ($property->isSkipped()) {
+                continue;
+            }
+
+            if ($property->isArray() && $property->isObject()) {
+                $values = array_map(function ($value) use ($property) {
+                    if ($value instanceof \ArrayObject) {
+                        $value = $value->getArrayCopy();
+                    }
+                    return $this->deserialize($property->getType(), $value);
+                }, $data[$reflectionProperty->getName()]);
+                $property->setValue($object, $values);
+            } elseif ($property->isObject()) {
                 $value = !is_null($data[$reflectionProperty->getName()])
                     ? $this->subDeserialize($property->getType(), $data[$reflectionProperty->getName()])
                     : null;
@@ -101,7 +122,6 @@ class ReflectionPropertiesSerializer
                     $object,
                     $value
                 );
-
             } else {
                 $property->setValue($object, $data[$reflectionProperty->getName()]);
             }
@@ -133,6 +153,10 @@ class ReflectionPropertiesSerializer
 
     private function subDeserialize($type, $data)
     {
+        if ($data instanceof \ArrayObject) {
+            $data = $data->getArrayCopy();
+        }
+
         if ($this->handler->canDeserialize($type, $data)) {
             return $this->handler->deserialize($type, $data);
         }

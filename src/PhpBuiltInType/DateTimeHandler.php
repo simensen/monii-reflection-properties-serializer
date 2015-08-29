@@ -18,7 +18,7 @@ class DateTimeHandler implements Handler
      */
     private $timezone;
 
-    public function __construct($format = DateTime::ISO8601, $timezone = 'UTC')
+    public function __construct($format = 'Y-m-d H:i:s.u', $timezone = 'UTC')
     {
         $this->format = $format;
         $this->timezone = $timezone;

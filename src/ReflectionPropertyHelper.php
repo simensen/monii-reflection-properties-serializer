@@ -29,10 +29,18 @@ class ReflectionPropertyHelper
      */
     private $isArray = false;
 
+    /**
+     * @var bool
+     */
+    private $isSkipped = false;
+
     public function __construct(\ReflectionClass $reflectionClass, \ReflectionProperty $reflectionProperty)
     {
         $reflectionProperty->setAccessible(true);
 
+        if (strpos($reflectionProperty->getDocComment(), "@skipSerialization") !== false) {
+            $this->isSkipped = true;
+        }
 
         if (strpos($reflectionProperty->getDocComment(), "@var") === false) {
             throw new PropertyTypeWasNotDefined($reflectionClass->getName(), $reflectionProperty->getName());
@@ -44,6 +52,12 @@ class ReflectionPropertyHelper
 
             if (!empty($types)) {
                 foreach ($types as $type) {
+                    if ($pos = strpos($type, '[]')) {
+                        $this->isArray = true;
+
+                        $type = substr($type, 0, $pos);
+                    }
+
                     if (class_exists($type)) {
                         // Object
                         $this->types[] = $type;
@@ -100,7 +114,12 @@ class ReflectionPropertyHelper
 
     public function isArray()
     {
-        return in_array('array', $this->types);
+        return $this->isArray || in_array('array', $this->types);
+    }
+
+    public function isSkipped()
+    {
+        return $this->isSkipped;
     }
 
     public function getType()

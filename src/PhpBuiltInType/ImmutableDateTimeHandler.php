@@ -8,7 +8,7 @@ use Monii\Serialization\ReflectionPropertiesSerializer\Handler;
 
 class ImmutableDateTimeHandler implements Handler
 {
-    public function __construct($format = 'Y-m-d\TH:i:sO', $timezone = 'UTC')
+    public function __construct($format = 'Y-m-d H:i:s.u', $timezone = 'UTC')
     {
         $this->format = $format;
         $this->timezone = $timezone;
