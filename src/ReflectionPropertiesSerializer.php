@@ -21,6 +21,10 @@ class ReflectionPropertiesSerializer
      */
     public function serialize($object)
     {
+        if ($this->handler->canSerialize($object)) {
+            return $this->handler->serialize($object);
+        }
+
         $data = [];
 
         $reflectionClass = new \ReflectionClass($object);
@@ -58,7 +62,7 @@ class ReflectionPropertiesSerializer
                     return $this->serialize($value);
                 }, $value);
             } elseif ($property->getType()) {
-                $data[$reflectionProperty->getName()] = $this->subSerialize($value);
+                $data[$reflectionProperty->getName()] = $this->serialize($value);
             } else {
                 $data[$reflectionProperty->getName()] = $value;
             }
@@ -80,6 +84,18 @@ class ReflectionPropertiesSerializer
      */
     public function deserialize($type, array $data)
     {
+        if ($data instanceof \ArrayObject) {
+            $data = $data->getArrayCopy();
+        }
+
+        if (is_object($type)) {
+            $type = get_class($type);
+        }
+
+        if ($this->handler->canDeserialize($type)) {
+            return $this->handler->deserialize($type, $data);
+        }
+
         $reflectionClass = new \ReflectionClass($type);
 
         $object = $reflectionClass->newInstanceWithoutConstructor();
@@ -115,7 +131,7 @@ class ReflectionPropertiesSerializer
                 $property->setValue($object, $values);
             } elseif ($property->isObject()) {
                 $value = !is_null($data[$reflectionProperty->getName()])
-                    ? $this->subDeserialize($property->getType(), $data[$reflectionProperty->getName()])
+                    ? $this->deserialize($property->getType(), $data[$reflectionProperty->getName()])
                     : null;
 
                 $property->setValue(
@@ -138,32 +154,5 @@ class ReflectionPropertiesSerializer
         }
 
         return $object;
-    }
-
-    private function subSerialize($object)
-    {
-        if ($this->handler->canSerialize($object)) {
-            return $this->handler->serialize($object);
-        }
-
-        return $this->serialize(
-            $object
-        );
-    }
-
-    private function subDeserialize($type, $data)
-    {
-        if ($data instanceof \ArrayObject) {
-            $data = $data->getArrayCopy();
-        }
-
-        if ($this->handler->canDeserialize($type, $data)) {
-            return $this->handler->deserialize($type, $data);
-        }
-
-        return $this->deserialize(
-            $type,
-            $data
-        );
     }
 }

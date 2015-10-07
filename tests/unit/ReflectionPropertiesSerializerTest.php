@@ -2,6 +2,7 @@
 
 namespace Monii\Serialization\ReflectionPropertiesSerializer;
 
+use DateTimeImmutable;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Depth\ReflectionPropertiesSerializerFixture;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\Post;
 use Monii\Serialization\ReflectionPropertiesSerializer\Fixtures\Blogging\PostId;
@@ -27,7 +28,7 @@ class ReflectionPropertiesSerializerTest extends TestCase
         // back again.
         $data = json_decode(json_encode($data), true);
 
-        $object = $reflectionSerializer->deserialize($input, $data);
+        $object = $reflectionSerializer->deserialize(get_class($input), $data);
 
         $this->assertEquals($input, $object);
     }
@@ -44,6 +45,7 @@ class ReflectionPropertiesSerializerTest extends TestCase
             [new AccountWasOpened('fixture-account-000', 25)],
             [new Post(PostId::fromString('first-post'))],
             [$complicated],
+            [new DateTimeImmutable('now')],
         ];
     }
 
