@@ -46,6 +46,7 @@ class ReflectionPropertiesSerializerTest extends TestCase
             [new Post(PostId::fromString('first-post'))],
             [$complicated],
             [new DateTimeImmutable('now')],
+            [null],
         ];
     }
 

@@ -25,6 +25,10 @@ class ReflectionPropertiesSerializer
             return $this->handler->serialize($object);
         }
 
+        if (is_null($object)) {
+            return null;
+        }
+
         $data = [];
 
         $reflectionClass = new \ReflectionClass($object);
@@ -82,8 +86,12 @@ class ReflectionPropertiesSerializer
     /**
      * (@inheritdoc)
      */
-    public function deserialize($type, array $data)
+    public function deserialize($type, array $data = null)
     {
+        if (is_null($data)) {
+            return null;
+        }
+
         if ($data instanceof \ArrayObject) {
             $data = $data->getArrayCopy();
         }
